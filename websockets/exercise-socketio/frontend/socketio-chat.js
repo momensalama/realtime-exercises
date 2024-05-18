@@ -5,11 +5,20 @@ const msgs = document.getElementById("msgs");
 const presence = document.getElementById("presence-indicator");
 let allChat = [];
 
-/*
- *
- * Code goes here
- *
- */
+const socket = io("http://localhost:8080");
+
+socket.on("connect", () => {
+  presence.innerText = "Connected 🟢";
+});
+
+socket.on("disconnect", () => {
+  presence.innerText = "Disconnected 🔴";
+});
+
+socket.on("msg:get", (date) => {
+  allChat = date.msgs;
+  render();
+});
 
 chat.addEventListener("submit", function (e) {
   e.preventDefault();
@@ -18,11 +27,8 @@ chat.addEventListener("submit", function (e) {
 });
 
 async function postNewMsg(user, text) {
-  /*
-   *
-   * Code goes here
-   *
-   */
+  const data = { user, text };
+  socket.emit("msg:post", data);
 }
 
 function render() {
